@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mukeshimana Kevin | Full-Stack Developer</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define CSS Variables for Theming */
+        :root {
+            /* Dark Mode Defaults */
+            --bg-color: #111827;        /* Gray-900 */
+            --card-color: #1f2937;      /* Gray-800 */
+            --text-color: #f3f4f6;      /* Gray-100 */
+            --border-color: #374151;    /* Gray-700 */
+            --header-bg: rgba(17, 24, 39, 0.95);
+        }
+
+        /* Light Mode Overrides */
+        body.light-mode {
+            --bg-color: #ffffff;
+            --card-color: #f3f4f6;      /* Gray-100 */
+            --text-color: #1f2937;      /* Gray-800 */
+            --border-color: #d1d5db;    /* Gray-300 */
+            --header-bg: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Apply CSS Variables to Tailwind classes */
+        .bg-background-dark { background-color: var(--bg-color); }
+        .text-text-light { color: var(--text-color); }
+        .bg-card-dark { background-color: var(--card-color); }
+        .border-gray-800 { border-color: var(--border-color); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+
+        /* Custom styles for smooth scrolling and general typography */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            z-index: 1;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Custom CSS for the particle canvas */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+        }
+        .section-header {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            z-index: 2; 
+        }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 75%;
+            height: 4px;
+            background-color: #3b82f6; /* Blue-500 - remains constant for accent */
+            border-radius: 9999px;
+        }
+        /* Navigation header must use the variable for blur effect */
+        header {
+            background-color: var(--header-bg);
+        }
+
+        /* Custom animation for Hero section text */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'background-dark': 'var(--bg-color)',
+                        'card-dark': 'var(--card-color)',
+                        'text-light': 'var(--text-color)',
+                        'blue-accent': '#3b82f6',
+                        'blue-400': '#60a5fa',
+                        'blue-600': '#2563eb',
+                        'blue-700': '#1d4ed8',
+                        'green-400': '#4ade80',
+                        'yellow-400': '#facc15',
+                        'purple-400': '#c084fc',
+                        'red-400': '#f87171',
+                        'gray-400': '#9ca3af',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background-dark text-text-light min-h-screen transition-colors duration-300">
+    
+    <!-- 1. Particles Canvas (Fixed Background) --><canvas id="particles-js"></canvas>
+
+    <!-- Navigation Header --><header class="sticky top-0 z-50 shadow-lg backdrop-blur-sm transition-colors duration-300">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-blue-400 hover:text-blue-300 transition duration-300">MUKESHIMANA KEVIN</a>
+            <div class="space-x-4 flex items-center">
+                <a href="#about" class="text-sm font-medium hover:text-blue-400 transition duration-300 rounded-lg px-3 py-2">About</a>
+                <a href="#skills" class="text-sm font-medium hover:text-blue-400 transition duration-300 rounded-lg px-3 py-2">Skills</a>
+                <a href="#projects" class="text-sm font-medium hover:text-blue-400 transition duration-300 rounded-lg px-3 py-2">Projects</a>
+                <a href="#contact" class="text-sm font-medium hover:text-blue-400 transition duration-300 rounded-lg px-3 py-2">Contact</a>
+
+                <!-- Theme Toggle Button --><button id="theme-toggle" class="p-2 rounded-full hover:bg-card-dark transition duration-300 focus:outline-none">
+                    <!-- Initial icon will be set by JS based on theme -->
+                    <svg id="moon-icon" class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zm7.36 4.97a.75.75 0 01-.53 1.28l-1.55-.49a.75.75 0 01-.26-1.42l1.55.49a.75.75 0 01.53 1.28zm-8.89 0a.75.75 0 01.53-1.28l1.55.49a.75.75 0 01.26 1.42l-1.55-.49a.75.75 0 01-.53 1.28zm-4.74 5.28a.75.75 0 010 1.5H3a.75.75 0 010-1.5h1.5zm15 0a.75.75 0 010 1.5h-1.5a.75.75 0 010-1.5h1.5zm-5.49 5.28a.75.75 0 01-.53 1.28l-1.55-.49a.75.75 0 01-.26-1.42l1.55.49a.75.75 0 01.53 1.28zm-8.89 0a.75.75 0 01.53-1.28l1.55.49a.75.75 0 01.26 1.42l-1.55-.49a.75.75 0 01-.53 1.28zm.95-6.81a6.75 6.75 0 1113.5 0 6.75 6.75 0 01-13.5 0z"/></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- 1. Hero Section --><section id="home" class="min-h-[80vh] flex items-center justify-center pt-16 relative z-10">
+            <div class="text-center">
+                <p class="text-blue-400 text-lg font-semibold mb-3 animate-fade-in-down delay-100">Hello World, my name is</p>
+                <!-- UPDATED NAME HERE --><h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-text-light mb-4 animate-fade-in-down delay-200">Mukeshimana Kevin 
+                    as known as 
+                    PLAY BOY CODER.</h1>
+                <!-- UPDATE YOUR PRIMARY ROLE/TAGLINE HERE --><h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-400 mb-8 animate-fade-in-down delay-300">I engineer cutting-edge web solutions.</h2>
+                <p class="max-w-2xl mx-auto text-gray-400 text-lg mb-10 animate-fade-in-down delay-400">
+                    I'm a full-stack developer specializing in creating fast, scalable, and responsive WEBSITES,GAMES,APPLICATIONS AND IOT BASED SYSTEMS using cutting-edge technologies.
+                </p>
+                <a href="#projects" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition duration-300 transform hover:scale-105 animate-fade-in-down delay-500">
+                    EXPROLE MY PROJECT
+                </a>
+            </div>
+        </section>
+
+        <!-- 2. About Me Section --><section id="about" class="py-24 relative z-10">
+            <h3 class="text-4xl font-bold section-header">About Me</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2 text-lg text-gray-400 leading-relaxed space-y-4">
+                    <!-- CUSTOMIZE YOUR BIO CONTENT HERE --><p>
+                        I'm **Mukeshimana Kevin**, a dedicated Full-Stack Engineer with five years of experience building and deploying robust, scalable web applications. My expertise spans the entire development lifecycle, from designing highly performant frontends to implementing secure and efficient backend services.
+                    </p>
+                    <p>
+                        **My Approach:** I specialize in the modern JavaScript ecosystem, focusing on **React, TypeScript, and Node.js**. I pride myself on clean architecture, comprehensive test coverage, and a strong commitment to user experience. I am passionate about optimizing applications for speed and maintainability.
+                    </p>
+                    <p>
+                        **Current Focus:** I'm actively exploring advanced cloud deployment patterns using AWS and honing my skills in serverless architecture. I thrive in collaborative, fast-paced environments and am always open to new professional challenges.
+                    </p>
+                </div>
+                <div class="lg:col-span-1 flex justify-center">
+                    <!-- Placeholder Profile Image/Avatar - UPDATED WITH STAR SVG LOGO -->
+                    <div class="">
+                        <!-- NEW INLINE SVG ICON -->
+
+                        <img src="download.jfif" alt="logo" height="80vh"weight=80vh>
+                        <!-- Text adjusted for space -->
+                        <div class="">
+                            <span class="text-xl text-red-400 font-extrabold block">PLAY BOY</span>
+                            <span class="text-3xl text-blue-400 font-extrabold block">CODER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Skills Section --><section id="skills" class="py-24 relative z-10">
+            <h3 class="text-4xl font-bold section-header">Technical Skills</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                <!-- Frontend Column --><div class="p-6 rounded-xl bg-card-dark border border-blue-700 shadow-xl">
+                    <h4 class="text-xl font-semibold mb-3 text-blue-400">Frontend</h4>
+                    <ul class="space-y-2 text-gray-400 list-disc list-inside ml-2">
+                        <li>React & Next.js</li>
+                        <li>TypeScript / JavaScript</li>
+                        <li>Tailwind CSS & SASS</li>
+                        <li>State Management (Redux/Zustand)</li>
+                        <li>Performance Optimization</li>
+                    </ul>
+                </div>
+
+                <!-- Backend Column --><div class="p-6 rounded-xl bg-card-dark border border-green-700 shadow-xl">
+                    <h4 class="text-xl font-semibold mb-3 text-green-400">Backend & Database</h4>
+                    <ul class="space-y-2 text-gray-400 list-disc list-inside ml-2">
+                        <li>Node.js & Express.js</li>
+                        <li>Python (Flask/Django)</li>
+                        <li>PostgreSQL / MongoDB</li>
+                        <li>RESTful APIs / GraphQL</li>
+                        <li>Authentication (OAuth/JWT)</li>
+                    </ul>
+                </div>
+
+                <!-- Tools/DevOps Column --><div class="p-6 rounded-xl bg-card-dark border border-yellow-700 shadow-xl">
+                    <h4 class="text-xl font-semibold mb-3 text-yellow-400">DevOps & Tools</h4>
+                    <ul class="space-y-2 text-gray-400 list-disc list-inside ml-2">
+                        <li>Git / GitHub / GitLab</li>
+                        <li>Docker / Kubernetes (Basics)</li>
+                        <li>AWS (Lambda, S3)</li>
+                        <li>CI/CD (e.g., GitHub Actions)</li>
+                        <li>Testing (Jest, Cypress)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Projects Section --><section id="projects" class="py-24 relative z-10">
+            <h3 class="text-4xl font-bold section-header">Featured Projects</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Project Card 1 --><div class="bg-card-dark p-6 rounded-xl shadow-2xl border border-gray-700 transition duration-300 hover:border-blue-500 hover:shadow-blue-900/50">
+                    <!-- PROJECT IMAGE HERE --><img src="Screenshot 2025-11-04 194447.png" alt="Screenshot of FinTech Dashboard" class="w-full h-40 object-cover rounded-md mb-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-blue-400 text-3xl">💻</span>
+                        <span class="text-xs text-gray-500 font-mono">React, TypeScript, Redux</span>
+                    </div>
+                    <h4 class="text-2xl font-semibold mb-2">FinTech Dashboard</h4>
+                    <p class="text-gray-400 text-base mb-4">
+                        A secure financial tracking dashboard optimized for high-frequency data updates. Implemented custom chart components for performance.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="Kevin-PBH" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View Code &rarr;</a>
+                        <a href="Fintech" class="text-sm text-gray-400 hover:text-gray-300 font-medium">Live Demo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 --><div class="bg-card-dark p-6 rounded-xl shadow-2xl border border-gray-700 transition duration-300 hover:border-blue-500 hover:shadow-blue-900/50">
+                    <!-- PROJECT IMAGE HERE --><img src="Screenshot 2025-11-04 194558.png" alt="Screenshot of Serverless API Generator" class="w-full h-40 object-cover rounded-md mb-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-green-400 text-3xl">🧩</span>
+                        <span class="text-xs text-gray-500 font-mono">Node.js, GraphQL, AWS</span>
+                    </div>
+                    <h4 class="text-2xl font-semibold mb-2">Serverless API Generator</h4>
+                    <p class="text-gray-400 text-base mb-4">
+                        A utility that automatically provisions and manages GraphQL endpoints using AWS Lambda and DynamoDB based on simple configuration files.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="Kevin-PBH" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View Code &rarr;</a>
+                        <a href="API servers" class="text-sm text-gray-400 hover:text-gray-300 font-medium">Live Demo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 --><div class="bg-card-dark p-6 rounded-xl shadow-2xl border border-gray-700 transition duration-300 hover:border-blue-500 hover:shadow-blue-900/50">
+                    <!-- PROJECT IMAGE HERE --><img src="Screenshot 2025-11-04 194645.png" alt="Screenshot of Open Source Blog Engine" class="w-full h-40 object-cover rounded-md mb-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-yellow-400 text-3xl">🚀</span>
+                        <span class="text-xs text-gray-500 font-mono">Vue.js, Tailwind, Firebase</span>
+                    </div>
+                    <h4 class="text-2xl font-semibold mb-2">Open Source Blog Engine</h4>
+                    <p class="text-gray-400 text-base mb-4">
+                        A lightweight, modern blogging platform focused on fast load times and clean SEO structure, built with Vue and Tailwind.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="Kevin-PBH" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View Code &rarr;</a>
+                        <a href="blog engine" class="text-sm text-gray-400 hover:text-gray-300 font-medium">Live Demo &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project Card 4: Real-Time Chat App --><div class="bg-card-dark p-6 rounded-xl shadow-2xl border border-gray-700 transition duration-300 hover:border-blue-500 hover:shadow-blue-900/50">
+                    <!-- PROJECT IMAGE HERE --><img src="Screenshot 2025-11-04 194809.png" alt="Screenshot of Real-Time Chat Application" class="w-full h-40 object-cover rounded-md mb-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-purple-400 text-3xl">💬</span>
+                        <span class="text-xs text-gray-500 font-mono">Go, WebSockets, Redis</span>
+                    </div>
+                    <h4 class="text-2xl font-semibold mb-2">High-Concurrency Chat App</h4>
+                    <p class="text-gray-400 text-base mb-4">
+                        A blazing-fast chat application backend designed for massive concurrent connections, utilizing Go routines and Redis for message queuing.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="Kevin-PBH" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View Code &rarr;</a>
+                        <a href="APP" class="text-sm text-gray-400 hover:text-gray-300 font-medium">Live Demo &rarr;</a>
+                    </div>
+                </div>
+                
+                <!-- Project Card 5: Predictive Analytics Platform --><div class="bg-card-dark p-6 rounded-xl shadow-2xl border border-gray-700 transition duration-300 hover:border-blue-500 hover:shadow-blue-900/50">
+                    <!-- PROJECT IMAGE HERE --><img src="Screenshot 2025-11-04 194925.png" alt="Screenshot of Predictive Analytics Platform" class="w-full h-40 object-cover rounded-md mb-4 border border-gray-600">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-red-400 text-3xl">📈</span>
+                        <span class="text-xs text-gray-500 font-mono">Python, Scikit-learn, D3.js</span>
+                    </div>
+                    <h4 class="text-2xl font-semibold mb-2">Predictive Analytics Platform</h4>
+                    <p class="text-gray-400 text-base mb-4">
+                        An end-to-end platform for data scientists to upload data, train models (Scikit-learn), and visualize results using interactive D3.js charts.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="Kevin-PBH" class="text-sm text-blue-400 hover:text-blue-300 font-medium">View Code &rarr;</a>
+                        <a href="PLATFORMS" class="text-sm text-gray-400 hover:text-gray-300 font-medium">Live Demo &rarr;</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 5. Contact Section --><section id="contact" class="py-24 text-center relative z-10">
+            <h3 class="text-4xl font-bold section-header mx-auto">Get In Touch</h3>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+                I'm currently seeking new opportunities and challenges. Whether you have a question or just want to say hi, feel free to reach out!
+            </p>
+
+            <!-- UPDATED EMAIL ADDRESS HERE --><a href="mukeshimanakevin20@gmail.com" class="inline-block bg-transparent border-2 border-blue-600 text-blue-400 font-semibold py-3 px-8 rounded-xl transition duration-300 hover:bg-blue-600 hover:text-white transform hover:scale-105">
+                Say Hello
+            </a>
+
+            <!-- UPDATED SOCIAL LINKS WITH ICONS --><div class="mt-8 flex justify-center space-x-6">
+                <!-- GitHub --><a href="Kevin-PBH" target="_blank" aria-label="GitHub" class="text-gray-500 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.417 2.865 8.134 6.83 9.48.5.092.682-.217.682-.483 0-.237-.008-.884-.015-1.745-2.785.603-3.37-.28-3.37-.28-.454-1.156-1.11-1.474-1.11-1.474-.908-.62.069-.608.069-.608 1.006.071 1.532 1.033 1.532 1.033.89 1.529 2.346 1.087 2.91.83.091-.643.35-1.087.635-1.339-2.22-.257-4.555-1.11-4.555-4.94 0-1.092.39-1.986 1.029-2.695-.103-.257-.445-1.272.098-2.65 0 0 .84-.27 2.75 1.036A9.577 9.577 0 0112 6.843c.961 0 1.942.13 2.853.385 1.908-1.306 2.748-1.036 2.748-1.036.543 1.378.202 2.393.1 2.65.64.71 1.028 1.603 1.028 2.695 0 3.84-2.338 4.68-4.562 4.933.35.303.674.908.674 1.831 0 1.325-.012 2.392-.012 2.72 0 .267.18.575.688.484C19.14 20.142 22 16.425 22 12.017 22 6.484 17.523 2 12 2z"/></svg>
+                </a>
+                
+                <!-- LinkedIn --><a href="MUKESHIMANA KEVIN" target="_blank" aria-label="LinkedIn" class="text-gray-500 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.5c-.959 0-1.75-.791-1.75-1.75s.791-1.75 1.75-1.75 1.75.791 1.75 1.75-.791 1.75-1.75 1.75zm13.5 12.5h-3v-5.604c0-3.368-4-3.529-4 0v5.604h-3v-11h3v1.765c1.397-2.584 7-2.771 7 3.513v5.722z"/></svg>
+                </a>
+
+                <!-- Twitter (X) --><a href="PLAY BOY CODER" target="_blank" aria-label="Twitter" class="text-gray-500 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.261 8.52 11.516h-7.864l-6.529-8.857-5.071 8.857H1.352l7.25-9.283L.956 2.25H8.384l5.378 7.294L18.244 2.25zm-2.825 15.589L6.536 4.317H4.072L16.031 20.25h2.463l-2.825-2.411z"/></svg>
+                </a>
+
+                <!-- Facebook --><a href="Junior Ben Johns Pickleball" target="_blank" aria-label="Facebook" class="text-gray-500 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.542-1.333h2.458v-4h-3.993c-3.187 0-4.007 1.272-4.007 3.291v1.709z"/></svg>
+                </a>
+
+                <!-- Instagram --><a href="@pro_rwandan_pickleballer" target="_blank" aria-label="Instagram" class="text-gray-500 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.645.069-4.849.069-3.205 0-3.584-.012-4.849-.069-3.252-.149-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.849 0-3.204.012-3.584.069-4.849.149-3.225 1.664-4.771 4.919-4.919 1.266-.058 1.645-.069 4.849-.069zM12-2.163c-3.259 0-3.667.014-4.947.072-4.358.201-6.78 2.624-6.981 6.981-.058 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.201 4.357 2.624 6.78 6.981 6.981 1.28.058 1.688.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.201 6.78-2.624 6.979-6.981.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.624-6.78-6.979-6.981-1.28-.058-1.69-.072-4.949-.072zM12 5.838c-3.403 0-6.162 2.758-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.758 6.162-6.162-2.758-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.44-.645 1.44-1.44s-.645-1.44-1.44-1.44z"/></svg>
+                </a>
+            </div>
+            <!-- END UPDATED SOCIAL LINKS --></section>
+
+    </main>
+
+    <!-- Footer --><footer class="bg-card-dark border-t border-gray-800 mt-12 py-6 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-400">
+            &copy; <span id="current-year"></span> Mukeshimana Kevin as known as PLAY BOY CODER. ALRIGHTS RESERVED .
+        </div>
+    </footer>
+
+    <!-- JavaScript for dynamic year, particle background logic, and theme switching -->
+    <script type="module">
+        // Import Firebase components
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase variables (MUST be used)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth, userId = null;
+        const THEME_DOC_PATH = `artifacts/${appId}/users/`; // path will be completed with userId/preferences/theme
+
+        // Set current year in the footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        /* --- Theme Management and Firestore Persistence --- */
+
+        const body = document.body;
+        const toggleButton = document.getElementById('theme-toggle');
+
+        // Theme colors for the Particle System
+        const THEME_COLORS = {
+            dark: {
+                particleColor: 'rgba(150, 192, 255, 0.7)',
+                lineColor: 'rgba(60, 130, 246, 0.1)',
+                canvasBg: '#111827'
+            },
+            light: {
+                particleColor: 'rgba(0, 0, 0, 0.4)',
+                lineColor: 'rgba(17, 24, 39, 0.1)',
+                canvasBg: '#ffffff'
+            }
+        };
+
+        let currentTheme = 'dark'; // Initialize particle system's theme state
+
+        function updateTheme(isLight) {
+            if (isLight) {
+                body.classList.add('light-mode');
+                toggleButton.innerHTML = `<svg id="moon-icon" class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.162 5.093a.75.75 0 01.32.748c-.544 3.078-2.68 5.676-5.592 6.36.192.65.32 1.32.378 2.01.063.74-.01 1.493-.243 2.214a1.71 1.71 0 00.342 1.442.75.75 0 01-.194.887l-1.396 1.106a.75.75 0 01-1.115-.815l.93-1.229a.12.12 0 00-.012-.132.75.75 0 01.69-.115c.677-.075 1.332-.249 1.947-.514 2.115-.929 3.666-3.13 3.97-5.612.067-.535.105-1.076.113-1.62.012-.667-.207-1.312-.647-1.801a.75.75 0 01.194-.887l1.396-1.106a.75.75 0 011.115.815l-.93 1.229a.12.12 0 00.012.132.75.75 0 01-.69.115z"/></svg>`;
+                currentTheme = 'light';
+            } else {
+                body.classList.remove('light-mode');
+                toggleButton.innerHTML = `<svg id="moon-icon" class="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zm7.36 4.97a.75.75 0 01-.53 1.28l-1.55-.49a.75.75 0 01-.26-1.42l1.55.49a.75.75 0 01.53 1.28zm-8.89 0a.75.75 0 01.53-1.28l1.55.49a.75.75 0 01.26 1.42l-1.55-.49a.75.75 0 01-.53 1.28zm-4.74 5.28a.75.75 0 010 1.5H3a.75.75 0 010-1.5h1.5zm15 0a.75.75 0 010 1.5h-1.5a.75.75 0 010-1.5h1.5zm-5.49 5.28a.75.75 0 01-.53 1.28l-1.55-.49a.75.75 0 01-.26-1.42l1.55.49a.75.75 0 01.53 1.28zm-8.89 0a.75.75 0 01.53-1.28l1.55.49a.75.75 0 01.26 1.42l-1.55-.49a.75.75 0 01-.53 1.28zm.95-6.81a6.75 6.75 0 1113.5 0 6.75 6.75 0 01-13.5 0z"/></svg>`;
+                currentTheme = 'dark';
+            }
+        }
+
+        async function saveThemePreference(isLight) {
+            if (!db || !userId) return;
+            try {
+                const themeRef = doc(db, THEME_DOC_PATH + userId, 'preferences');
+                await setDoc(themeRef, { theme: isLight ? 'light' : 'dark' }, { merge: true });
+            } catch (error) {
+                console.error("Error saving theme preference:", error);
+            }
+        }
+
+        async function loadThemePreference() {
+            if (!db || !userId) return false;
+            try {
+                const themeRef = doc(db, THEME_DOC_PATH + userId, 'preferences');
+                const docSnap = await getDoc(themeRef);
+                if (docSnap.exists() && docSnap.data().theme) {
+                    return docSnap.data().theme === 'light';
+                }
+            } catch (error) {
+                console.error("Error loading theme preference:", error);
+            }
+            return false; // Default to dark if loading fails
+        }
+
+        function toggleTheme() {
+            const isLight = !body.classList.contains('light-mode');
+            updateTheme(isLight);
+            saveThemePreference(isLight);
+        }
+
+        /* --- Firebase Initialization and Auth --- */
+
+        async function initFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config not available. Persistence will not work.");
+                // Use system preference as a fallback default if Firebase is unavailable
+                const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+                updateTheme(prefersLight);
+                return;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Authentication
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    const preferredTheme = await loadThemePreference();
+                    updateTheme(preferredTheme);
+                } else {
+                    // Sign in anonymously if no token is provided, or use custom token
+                    try {
+                        if (initialAuthToken) {
+                            await signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Authentication failed:", error);
+                    }
+                }
+                // Once theme is set (either loaded or defaulted), start particles
+                setCanvasDimensions();
+                createParticles();
+                animateParticles();
+            });
+        }
+
+        /* --- Particle System Logic --- */
+        const canvas = document.getElementById('particles-js');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        // Particle configuration constants
+        const numParticles = 80;
+        const maxLineDistance = 120;
+        const maxRadius = 3;
+        
+        // Mouse tracking object for interaction
+        let mouse = {
+            x: null,
+            y: null,
+            radius: 100 
+        };
+
+        let particlesArray = [];
+
+        function setCanvasDimensions() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        
+        // Event Listeners for mouse interaction
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+        
+        // Add event listener for the toggle button
+        toggleButton.addEventListener('click', toggleTheme);
+
+
+        // Particle Constructor
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * (maxRadius - 0.5) + 0.5;
+                this.vx = Math.random() * 0.5 - 0.25; 
+                this.vy = Math.random() * 0.5 - 0.25; 
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                // Use dynamic theme color
+                const color = currentTheme === 'light' ? THEME_COLORS.light.particleColor : THEME_COLORS.dark.particleColor;
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            update() {
+                // 1. Move the particle
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 2. Bounce off walls and reverse direction
+                if (this.x + this.radius > width || this.x - this.radius < 0) {
+                    this.vx = -this.vx;
+                }
+                if (this.y + this.radius > height || this.y - this.radius < 0) {
+                    this.vy = -this.vy;
+                }
+                
+                // 3. Mouse Interaction Logic
+                if (mouse.x !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const maxForce = 5;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const directionX = forceDirectionX * force * maxForce * 0.5;
+                        const directionY = forceDirectionY * force * maxForce * 0.5;
+
+                        this.vx += directionX * 0.1; 
+                        this.vy += directionY * 0.1;
+                    }
+                }
+            }
+        }
+
+        function createParticles() {
+            particlesArray = [];
+            for (let i = 0; i < numParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            const lineColorBase = currentTheme === 'light' ? THEME_COLORS.light.lineColor : THEME_COLORS.dark.lineColor;
+            
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    const dx = particlesArray[a].x - particlesArray[b].x;
+                    const dy = particlesArray[a].y - particlesArray[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < maxLineDistance) {
+                        const opacityValue = 1 - (distance / maxLineDistance);
+                        
+                        // Dynamically set line color opacity
+                        ctx.strokeStyle = lineColorBase.replace('0.1', opacityValue * 0.2); 
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            // Clear the canvas with the background color of the current theme
+            const canvasBg = currentTheme === 'light' ? THEME_COLORS.light.canvasBg : THEME_COLORS.dark.canvasBg;
+            ctx.fillStyle = canvasBg;
+            ctx.fillRect(0, 0, width, height);
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connectParticles();
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].draw();
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        // Initialization on load
+        window.onload = function() {
+            initFirebase();
+        };
+
+        // Handle resize events
+        window.addEventListener('resize', setCanvasDimensions);
+        
+    </script>
+</body>
+</html>
